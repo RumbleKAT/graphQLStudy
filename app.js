@@ -2,13 +2,17 @@ var express = require('express')
 var { graphqlHTTP } = require('express-graphql')
 var { buildSchema } = require('graphql')
 var cors = require('cors')
+const { default: RandomDie } = require('./components/RandomDie')
 
 var schema = buildSchema(`
+    type RandomDie{
+        numSides : Int!
+        rollOnce : Int!
+        roll(numRolls: Int!): [Int]
+    }
+
     type Query{
-        quoteOfTheDay:String
-        random: Float!
-        rollThreeDice : [Int]
-        rollDice(numDice: Int!, numSides: Int) : [Int]
+        getDie(numSides : Int) : RandomDie
     }
 `)
 
@@ -29,6 +33,9 @@ var root ={
             output.push(1+Math.floor(Math.random() * (args.numSides || 6)));
         }
         return output;
+    },
+    getDie: ({numSides}) =>{
+        return new RandomDie(numSides || 6)
     }
 }
 
