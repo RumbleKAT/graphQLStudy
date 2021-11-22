@@ -11,31 +11,28 @@ var schema = buildSchema(`
         roll(numRolls: Int!): [Int]
     }
 
+    type Mutation{
+        setMessage(message: String) : String
+    }
+
     type Query{
         getDie(numSides : Int) : RandomDie
+        getMessage : String
     }
 `)
 
+var fakeDatabase = {};
+
 var root ={
-    quoteOfTheDay : () =>{
-        return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within'
-    },
-    random: ()=>{
-        return Math.random()
-    },
-    rollThreeDice : ()=>{
-        return [1,2,3].map(_ => 1 + Math.floor(Math.random() * 6))
-    },
-    rollDice: (args) =>{
-        //  rollDice(numDice: 3, numSides: 6)
-        var output = [];
-        for(var i =0;i<args.numDice;i++){
-            output.push(1+Math.floor(Math.random() * (args.numSides || 6)));
-        }
-        return output;
-    },
     getDie: ({numSides}) =>{
         return new RandomDie(numSides || 6)
+    },
+    setMessage : ({message})=>{
+        fakeDatabase.message = message;
+        return message;
+    },
+    getMessage : ()=>{
+        return fakeDatabase.message;
     }
 }
 
