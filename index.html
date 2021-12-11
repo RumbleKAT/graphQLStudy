@@ -7,12 +7,16 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="canvas"></div>
     <script>
         var author = 'andy'
         var content  = 'hope is a good thing'
-        var query = `mutation CreateMessage($input: MessageInput){
+        var query = `mutation 
+        CreateMessage($input: MessageInput){
             createMessage(input: $input){
                 id
+                author
+                content
             }
         }`;
 
@@ -32,8 +36,23 @@
                 }
             })
         }).then(r => r.json())
-        .then(data => console.log('data returned : ', data))
+        .then(data => {
+            const dom = document.querySelector('#card').innerHTML;
+            const message = data.data.createMessage;
+
+            var res = dom.replace("{author}", message.author)
+                         .replace("{content}", message.content)
+            
+            console.log(res)
+            
+            document.querySelector('#canvas').innerHTML = res;
+        })
 
     </script>
+    <script id="card" type="text/template">
+        <h1>{author}</h1>
+        <p>{content}</p>
+    </script>
+    
 </body>
 </html>
